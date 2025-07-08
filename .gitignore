@@ -2,7 +2,7 @@
 .idea
 
 ### Exceptions for readme
-!images/readme/*.pmg
+!images/readme/*.png
 
 ### venv template
 # Virtualenv

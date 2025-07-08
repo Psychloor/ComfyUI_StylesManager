@@ -1,5 +1,38 @@
 ﻿cmake_minimum_required(VERSION 3.31)
-project(StylesManager LANGUAGES CXX)
+
+# Version numbers that you can manually control
+set(PROJECT_VERSION_MAJOR 1)
+set(PROJECT_VERSION_MINOR 0)
+
+# Get the latest commit count for the patch version
+execute_process(
+        COMMAND git rev-list --count HEAD
+        OUTPUT_VARIABLE PROJECT_VERSION_PATCH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the current git hash
+execute_process(
+        COMMAND git rev-parse --short HEAD
+        OUTPUT_VARIABLE GIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Combine version numbers
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+
+
+project(StylesManager
+        VERSION ${PROJECT_VERSION}
+        LANGUAGES CXX
+)
+
+# Generate a header file with version information
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/version.h
+)
+
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -82,6 +115,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/third_party/json
         ${CMAKE_CURRENT_SOURCE_DIR}/third_party/csv
+        ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 

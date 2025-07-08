@@ -74,7 +74,16 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_PREFIX_PATH "C:/Qt/6.9.1/msvc2022_64")
+# Add this near the top of your CMakeLists.txt
+set(QT_DIR "" CACHE PATH "Path to Qt installation")
+
+if(QT_DIR)
+    set(CMAKE_PREFIX_PATH ${QT_DIR})
+else()
+    # Your default path finding logic here
+    # ... (same as above)
+endif()
+
 
 if (CMAKE_BUILD_TYPE MATCHES "Release")
     set(CMAKE_CXX_FLAGS "-O2")

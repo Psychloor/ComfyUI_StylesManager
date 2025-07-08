@@ -1113,7 +1113,7 @@ FodyWeavers.xsd
 # Calabash / Cucumber
 rerun/
 reports/
-images/
+screenshot/
 screenshot*.png
 test-servers/
 

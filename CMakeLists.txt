@@ -21,7 +21,6 @@ execute_process(
 # Combine version numbers
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
-
 project(StylesManager
         VERSION ${PROJECT_VERSION}
         LANGUAGES CXX
@@ -81,7 +80,6 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
     set(CMAKE_CXX_FLAGS "-O2")
     add_compile_options(-O2)
 endif ()
-
 
 # Set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

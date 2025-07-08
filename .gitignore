@@ -1,19 +1,6 @@
 ﻿### idea folder
 .idea
 
-### venv template
-# Virtualenv
-# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
-.Python
-[Bb]in
-[Ll]ib
-[Ll]ib64
-[Ll]ocal
-[Ss]cripts
-pyvenv.cfg
-.venv
-pip-selfcheck.json
-
 ### MonoDevelop template
 #User Specific
 *.userprefs

@@ -74,14 +74,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# Add this near the top of your CMakeLists.txt
 set(QT_DIR "" CACHE PATH "Path to Qt installation")
 
 if(QT_DIR)
     set(CMAKE_PREFIX_PATH ${QT_DIR})
 else()
-    # Your default path finding logic here
-    # ... (same as above)
+    # don't set and see how cmake does
 endif()
 
 

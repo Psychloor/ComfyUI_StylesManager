@@ -33,7 +33,7 @@ This application uses the Qt 6 framework, which is licensed under the **GNU Less
 - Homepage: [https://www.qt.io](https://www.qt.io)
 - License: [https://www.gnu.org/licenses/lgpl-3.0.html](https://www.gnu.org/licenses/lgpl-3.0.html)
 
-See `LICENSE.Qt.txt` for a copy of the license.
+See `QT_LICENSE` for a copy of the license.
 
 ---
 

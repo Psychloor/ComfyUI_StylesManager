@@ -9,11 +9,7 @@
 settings& settings::instance()
 {
 	static settings instance;
-	if (!instance._loaded)
-	{
-		instance.load();
-		instance._loaded = true;
-	}
+	instance.load();
 
 	return instance;
 }

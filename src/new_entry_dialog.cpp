@@ -8,7 +8,6 @@
 
 #include <QMessageBox>
 
-
 #include "include/prompt_name_validator.h"
 #include "ui_new_entry_dialog.h"
 

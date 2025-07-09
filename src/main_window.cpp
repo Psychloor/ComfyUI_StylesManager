@@ -363,13 +363,6 @@ bool main_window::load_csv_file(const QString& file_path)
 			auto prompt = row["prompt"].get<std::string>();
 			auto negative = row["negative_prompt"].get<std::string>();
 
-			if (!prompt.empty() && prompt.find("{prompt}") == std::string::npos)
-			{
-				std::string temp = "{prompt} ";
-				temp += prompt;
-				prompt = std::move(temp);
-			}
-
 			_model->add_entry(ns::prompt_entry(
 				QString::fromStdString(name),
 				QString::fromStdString(prompt),
@@ -569,7 +562,7 @@ void main_window::close_clicked()
 void main_window::remove_duplicates_clicked()
 {
 	std::unordered_set<QString> unique_names;
-	std::vector<ns::prompt_entry> unique_entries;
+	QVector<ns::prompt_entry> unique_entries;
 
 	Q_FOREACH(const auto& entry, _model->entries())
 	{

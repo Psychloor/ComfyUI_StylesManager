@@ -10,6 +10,7 @@
 #endif
 
 #include <third_party/json/json.h>
+#include <utility>
 
 namespace ns
 {
@@ -19,6 +20,21 @@ namespace ns
 		QString prompt;
 		QString negative_prompt;
 
+		prompt_entry() = default;
+
+		prompt_entry(QString name, const QString& prompt, QString negative_prompt)
+			: name(std::move(name)), negative_prompt(std::move(negative_prompt))
+		{
+			if (prompt.isEmpty() || !prompt.contains("{prompt}"))
+			{
+				this->prompt = "{prompt}, " + prompt;
+			}
+			else
+			{
+				this->prompt = prompt;
+			}
+		}
+
 		bool operator==(const prompt_entry&) const = default;
 		bool operator!=(const prompt_entry&) const = default;
 	};
@@ -27,9 +43,9 @@ namespace ns
 	void to_json(TJson& j, const prompt_entry& p)
 	{
 		j = TJson{
-				{"name", p.name},
-				{"prompt", p.prompt},
-				{"negative_prompt", p.negative_prompt}
+			{"name", p.name},
+			{"prompt", p.prompt},
+			{"negative_prompt", p.negative_prompt}
 		};
 	}
 
@@ -44,21 +60,22 @@ namespace ns
 
 // QString serialization (needs to be in nlohmann namespace)
 NLOHMANN_JSON_NAMESPACE_BEGIN
-template <>
-struct adl_serializer<QString>
-{
-	template <typename TJson>
-	static void to_json(TJson& j, const QString& q)
+	template <>
+	struct adl_serializer<QString>
 	{
-		j = q.toUtf8().constData();
-	}
+		template <typename TJson>
+		static void to_json(TJson& j, const QString& q)
+		{
+			j = q.toUtf8().constData();
+		}
 
-	template <typename TJson>
-	static void from_json(const TJson& j, QString& q)
-	{
-		q = QString::fromUtf8(j.template get<std::string>().c_str());
-	}
-};
+		template <typename TJson>
+		static void from_json(const TJson& j, QString& q)
+		{
+			q = QString::fromUtf8(j.template get<std::string>().c_str());
+		}
+	};
+
 NLOHMANN_JSON_NAMESPACE_END
 
 #endif //PROMPT_ENTRY_H

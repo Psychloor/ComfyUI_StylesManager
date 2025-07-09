@@ -433,10 +433,13 @@ void main_window::add_entry_clicked()
 
 void main_window::rename_entry_clicked()
 {
+	// Convert proxy index to source index
 	const auto selected_index = _ui->promptnameComboBox->currentIndex();
-	if (selected_index < 0 || selected_index >= _model->rowCount(QModelIndex())) return;
+	const auto source_index = _proxy_model->mapToSource(_proxy_model->index(selected_index, 0)).row();
 
-	const auto model_index = _model->index(selected_index);
+	if (source_index < 0 || source_index >= _model->rowCount(QModelIndex())) return;
+
+	const auto model_index = _model->index(source_index);
 	const auto old_name = _model->data(model_index, ns::prompt_entry_roles::pr_name_role).toString();
 
 	new_entry_dialog dialog(this);
@@ -537,8 +540,9 @@ void main_window::save_as_clicked()
 	}
 
 	const QString file_save_name = QFileDialog::getSaveFileName(this,
-														  tr("Save Prompts"), settings::instance().last_directory(),
-														  tr("JSON Files (*.json);;All Files (*)"));
+																tr("Save Prompts"),
+																settings::instance().last_directory(),
+																tr("JSON Files (*.json);;All Files (*)"));
 
 	if (file_save_name.isEmpty())
 	{
@@ -569,7 +573,8 @@ void main_window::remove_duplicates_clicked()
 
 	Q_FOREACH(const auto& entry, _model->entries())
 	{
-		if (auto [it, inserted] = unique_names.insert(entry.name); inserted) {
+		if (auto [it, inserted] = unique_names.insert(entry.name); inserted)
+		{
 			unique_entries.push_back(entry);
 		}
 	}

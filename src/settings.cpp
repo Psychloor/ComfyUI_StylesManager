@@ -32,7 +32,8 @@ void settings::add_recent_file(const QString& path)
 	_recent_files.prepend(path);
 
 	// Keep only the last 10 files
-	while (_recent_files.size() > 10) {
+	while (_recent_files.size() > 10)
+	{
 		_recent_files.removeLast();
 	}
 

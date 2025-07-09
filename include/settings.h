@@ -7,7 +7,8 @@
 
 #include <QStringList>
 
-class settings {
+class settings
+{
 public:
 	static settings& instance();
 
@@ -27,7 +28,6 @@ private:
 	QString _last_directory;
 	bool _loaded = false;
 };
-
 
 
 #endif //SETTINGS_H

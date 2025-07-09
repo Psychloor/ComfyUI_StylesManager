@@ -15,10 +15,12 @@
 #include "include/prompt_entry_list_model.h"
 
 QT_BEGIN_NAMESPACE
+
 namespace Ui
 {
     class main_window;
 }
+
 QT_END_NAMESPACE
 
 class main_window final : public QMainWindow
@@ -56,14 +58,13 @@ private:
     void save_json_file(const QString& file_path);
     void setup_mapper();
     void update_recent_files_menu();
-     [[nodiscard]] bool check_unsaved_changes();
+    [[nodiscard]] bool check_unsaved_changes();
     bool load_json_file(const QString& file_path);
     bool load_csv_file(const QString& file_path);
 
     static constexpr auto window_title = " - Prompt Styles Manager";
     static constexpr auto untitled = "Untitled[*]";
     static constexpr auto untitled_window_title = "Untitled[*] - Prompt Styles Manager";
-
 
 private:
     std::unique_ptr<Ui::main_window> _ui;

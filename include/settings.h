@@ -25,6 +25,7 @@ private:
 
 	QStringList _recent_files;
 	QString _last_directory;
+	bool _loaded = false;
 };
 
 

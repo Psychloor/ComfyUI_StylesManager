@@ -83,10 +83,10 @@ public:
     [[nodiscard]] const QVector<prompt_entry>& entries() const { return _entries; }
      [[nodiscard]] QVector<prompt_entry>& entries() { return _entries; }
 
-    void set_entries(const std::vector<prompt_entry>& entries) {
+    void set_entries(QVector<prompt_entry>& entries) {
         beginResetModel();
         _entries.clear();
-        _entries = QVector<prompt_entry>(entries.begin(), entries.end());
+        _entries = std::move(entries);
         endResetModel();
     }
 

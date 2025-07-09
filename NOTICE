@@ -1,5 +1,42 @@
-﻿## Third-Party Licenses
+﻿# Third-Party Licenses
 
-### Qt 6
-This software uses the Qt 6 framework, licensed under the GNU Lesser General Public License v3.0 (LGPL-3.0).
-See: https://www.qt.io/licensing
+This project uses third-party libraries listed below. Each retains its own license as detailed.
+
+---
+
+## Qt 6
+
+This application uses the Qt 6 framework, which is licensed under the **GNU Lesser General Public License v3.0 (LGPL-3.0)**.
+
+- Homepage: [https://www.qt.io](https://www.qt.io)
+- License: [https://www.gnu.org/licenses/lgpl-3.0.html](https://www.gnu.org/licenses/lgpl-3.0.html)
+
+See `LICENSE.Qt.txt` for a copy of the license.
+
+---
+
+## nlohmann/json
+
+**nlohmann/json** is a modern C++ JSON library.
+
+- Repository: [https://github.com/nlohmann/json](https://github.com/nlohmann/json)
+- License: **MIT**
+
+MIT License © 2013–2024 Niels Lohmann
+
+A copy of the MIT license is available in the `third_party/json/LICENSE.MIT` file or at the repository above.
+
+---
+
+## csv-parser
+
+**csv-parser** by Vincent Lau is a fast, flexible CSV parser for modern C++.
+
+- Repository: [https://github.com/vincentlaucsb/csv-parser](https://github.com/vincentlaucsb/csv-parser)
+- License: **MIT**
+
+MIT License © 2019 Vincent Lau
+
+A copy of the MIT license is available in the `third_party/csv/LICENSE.MIT` file or at the repository above.
+
+---

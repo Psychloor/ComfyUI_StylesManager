@@ -57,7 +57,7 @@ private:
     void setup_mapper();
     void update_recent_files_menu();
      [[nodiscard]] bool check_unsaved_changes();
-    bool load_file(const QString& file_path);
+    bool load_json_file(const QString& file_path);
     bool load_csv_file(const QString& file_path);
 
     static constexpr auto window_title = " - Prompt Styles Manager";

@@ -113,7 +113,7 @@ void main_window::dropEvent(QDropEvent* event)
 	bool success = false;
 	if (extension == "json")
 	{
-		success = load_file(file_path);
+		success = load_json_file(file_path);
 	}
 	else if (extension == "csv")
 	{
@@ -241,7 +241,7 @@ void main_window::update_recent_files_menu()
 		{
 			if (check_unsaved_changes())
 			{
-				load_file(file);
+				load_json_file(file);
 			}
 		});
 	}
@@ -281,7 +281,7 @@ bool main_window::check_unsaved_changes()
 	return true;
 }
 
-bool main_window::load_file(const QString& file_path)
+bool main_window::load_json_file(const QString& file_path)
 {
 	QFile file(file_path);
 	if (!file.exists())
@@ -510,7 +510,7 @@ void main_window::open_clicked()
 
 	if (!file_name.isEmpty())
 	{
-		load_file(file_name);
+		load_json_file(file_name);
 	}
 }
 

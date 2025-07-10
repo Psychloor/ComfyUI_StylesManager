@@ -25,7 +25,7 @@ QT_END_NAMESPACE
 
 class main_window final : public QMainWindow
 {
-    Q_OBJECT
+    Q_OBJECT // NOLINT(*-identifier-length)
 
 public:
     explicit main_window(QWidget* parent = nullptr);
@@ -66,7 +66,6 @@ private:
     static constexpr auto untitled = "Untitled[*]";
     static constexpr auto untitled_window_title = "Untitled[*] - Prompt Styles Manager";
 
-private:
     std::unique_ptr<Ui::main_window> _ui;
     std::unique_ptr<QMenu> _recent_files_menu;
 

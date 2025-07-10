@@ -15,34 +15,34 @@
 new_entry_dialog::new_entry_dialog(QWidget* parent) :
 	QDialog(parent)
 {
-	ui = std::make_unique<Ui::new_entry_dialog>();
-	ui->setupUi(this);
+	_ui = std::make_unique<Ui::new_entry_dialog>();
+	_ui->setupUi(this);
 
 	_validator = std::make_unique<prompt_name_validator>();
-	ui->promptNameLineEdit->setValidator(_validator.get());
-	ui->confirmButton->setEnabled(false);
+	_ui->promptNameLineEdit->setValidator(_validator.get());
+	_ui->confirmButton->setEnabled(false);
 
-	connect(ui->confirmButton, &QPushButton::clicked, this, &new_entry_dialog::confirm_clicked);
-	connect(ui->cancelButton, &QPushButton::clicked, this, &new_entry_dialog::cancel_clicked);
+	connect(_ui->confirmButton, &QPushButton::clicked, this, &new_entry_dialog::confirm_clicked);
+	connect(_ui->cancelButton, &QPushButton::clicked, this, &new_entry_dialog::cancel_clicked);
 
-	connect(ui->promptNameLineEdit, &QLineEdit::textChanged, this, &new_entry_dialog::validate_input);
+	connect(_ui->promptNameLineEdit, &QLineEdit::textChanged, this, &new_entry_dialog::validate_input);
 }
 
 new_entry_dialog::~new_entry_dialog() = default;
 
 void new_entry_dialog::set_name(const QString& name) const
 {
-	ui->promptNameLineEdit->setText(name);
+	_ui->promptNameLineEdit->setText(name);
 }
 
 void new_entry_dialog::set_confirm_button_text(const QString& text) const
 {
-	ui->confirmButton->setText(text);
+	_ui->confirmButton->setText(text);
 }
 
 QString new_entry_dialog::get_name() const
 {
-	return ui->promptNameLineEdit->text();
+	return _ui->promptNameLineEdit->text();
 }
 
 void new_entry_dialog::confirm_clicked()
@@ -58,7 +58,7 @@ void new_entry_dialog::cancel_clicked()
 void new_entry_dialog::validate_input() const
 {
 	int pos = 0;
-	QString text = ui->promptNameLineEdit->text();
+	QString text = _ui->promptNameLineEdit->text();
 	const auto state = _validator->validate(text, pos);
-	ui->confirmButton->setEnabled(state == QValidator::Acceptable);
+	_ui->confirmButton->setEnabled(state == QValidator::Acceptable);
 }

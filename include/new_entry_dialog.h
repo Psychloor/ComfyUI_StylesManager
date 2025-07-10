@@ -38,7 +38,7 @@ public slots:
 private:
     void validate_input() const;
 
-    std::unique_ptr<Ui::new_entry_dialog> ui;
+    std::unique_ptr<Ui::new_entry_dialog> _ui;
     std::unique_ptr<prompt_name_validator> _validator;
 };
 

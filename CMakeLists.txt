@@ -42,6 +42,7 @@ set(SOURCES
         src/main_window.cpp
         src/new_entry_dialog.cpp
         src/settings.cpp
+        src/prompt_entry_list_model.cpp
 )
 
 # Header files

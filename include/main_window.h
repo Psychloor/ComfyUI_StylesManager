@@ -70,9 +70,11 @@ private:
     std::unique_ptr<QMenu> _recent_files_menu;
 
     QFileInfo _current_file_info;
-    std::unique_ptr<ns::prompt_entry_list_model> _model;
+    std::unique_ptr<prompt_entry_list_model> _model;
     std::unique_ptr<QSortFilterProxyModel> _proxy_model;
     std::unique_ptr<QDataWidgetMapper> _mapper;
+
+    static constexpr int status_bar_timeout = 3000;
 };
 
 

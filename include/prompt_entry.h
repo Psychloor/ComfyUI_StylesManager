@@ -12,31 +12,31 @@
 #include <third_party/json/json.h>
 #include <utility>
 
-namespace ns
+struct prompt_entry
 {
-	struct prompt_entry
+	QString name;
+	QString prompt;
+	QString negative_prompt;
+
+	prompt_entry() = default;
+
+	prompt_entry(QString name, QString prompt, QString negative_prompt) : name(std::move(name)),
+																		  prompt(std::move(prompt)),
+																		  negative_prompt(
+																			  std::move(negative_prompt))
 	{
-		QString name;
-		QString prompt;
-		QString negative_prompt;
-
-		prompt_entry() = default;
-
-		prompt_entry(QString name, QString prompt, QString negative_prompt) : name(std::move(name)),
-																			  prompt(std::move(prompt)),
-																			  negative_prompt(
-																				  std::move(negative_prompt))
+		if (this->prompt.isEmpty() || !this->prompt.contains("{prompt}"))
 		{
-			if (this->prompt.isEmpty() || !this->prompt.contains("{prompt}"))
-			{
-				this->prompt = "{prompt}, " + prompt;
-			}
+			this->prompt = "{prompt}, " + this->prompt;
 		}
+	}
 
-		bool operator==(const prompt_entry&) const = default;
-		bool operator!=(const prompt_entry&) const = default;
-	};
+	bool operator==(const prompt_entry&) const = default;
+	bool operator!=(const prompt_entry&) const = default;
+};
 
+// QString serialization (needs to be in nlohmann namespace)
+NLOHMANN_JSON_NAMESPACE_BEGIN
 	template <typename TJson>
 	void to_json(TJson& json, const prompt_entry& prompt)
 	{
@@ -54,10 +54,7 @@ namespace ns
 		json.at("prompt").get_to(prompt.prompt);
 		json.at("negative_prompt").get_to(prompt.negative_prompt);
 	}
-}
 
-// QString serialization (needs to be in nlohmann namespace)
-NLOHMANN_JSON_NAMESPACE_BEGIN
 	template <>
 	struct adl_serializer<QString>
 	{

@@ -15,7 +15,6 @@
 #include "settings.h"
 #include "include/new_entry_dialog.h"
 
-
 main_window::main_window(QWidget* parent) :
 	QMainWindow(parent)
 {
@@ -23,7 +22,7 @@ main_window::main_window(QWidget* parent) :
 	_ui->setupUi(this);
 	setAcceptDrops(true);
 
-	_model = std::make_unique<ns::prompt_entry_list_model>();
+	_model = std::make_unique<prompt_entry_list_model>();
 
 	_proxy_model = std::make_unique<QSortFilterProxyModel>(this);
 	_proxy_model->setSourceModel(_model.get());
@@ -58,7 +57,7 @@ main_window::main_window(QWidget* parent) :
 	connect(_ui->actionClose, &QAction::triggered, this, &main_window::close_clicked);
 	connect(_ui->actionRemoveDuplicates, &QAction::triggered, this, &main_window::remove_duplicates_clicked);
 
-	connect(_model.get(), &ns::prompt_entry_list_model::dataChanged, this, &main_window::model_data_changed);
+	connect(_model.get(), &prompt_entry_list_model::dataChanged, this, &main_window::model_data_changed);
 
 	// Setup recent files menu
 	_recent_files_menu = std::make_unique<QMenu>("Recent Files", this);
@@ -142,14 +141,14 @@ void main_window::save_json_file(const QString& file_path)
 
 	try
 	{
-		nlohmann::ordered_json j = nlohmann::ordered_json::array();
+		nlohmann::ordered_json json = nlohmann::ordered_json::array();
 		Q_FOREACH(const auto& entry, _model->entries())
 		{
-			j.push_back(entry);
+			json.push_back(entry);
 		}
 
 		// Write JSON using QFile
-		if (const QByteArray json_data = QByteArray::fromStdString(j.dump(4)); file.write(json_data) == -1)
+		if (const QByteArray json_data = QByteArray::fromStdString(json.dump(4)); file.write(json_data) == -1)
 		{
 			throw std::runtime_error("Failed to write to file");
 		}
@@ -163,7 +162,7 @@ void main_window::save_json_file(const QString& file_path)
 		settings::instance().add_recent_file(file_path);
 		update_recent_files_menu();
 
-		_ui->statusbar->showMessage(tr("File saved successfully"), 3000);
+		_ui->statusbar->showMessage(tr("File saved successfully"), status_bar_timeout);
 	}
 	catch (const std::exception& e)
 	{
@@ -178,7 +177,7 @@ void main_window::setup_mapper()
 	{
 		_mapper = std::make_unique<QDataWidgetMapper>(this);
 		_mapper->setModel(_model.get());
-		_mapper->addMapping(_ui->promptnameComboBox, ns::pr_name_role);
+		_mapper->addMapping(_ui->promptnameComboBox, static_cast<int>(prompt_entry_roles::name));
 
 		// For QPlainTextEdit, we need to handle it differently
 		connect(_mapper.get(), &QDataWidgetMapper::currentIndexChanged,
@@ -188,9 +187,9 @@ void main_window::setup_mapper()
 					{
 						const QModelIndex modelIdx = _model->index(idx);
 						_ui->promptTextEdit->setPlainText(
-							_model->data(modelIdx, ns::pr_prompt_role).toString());
+							_model->data(modelIdx, static_cast<int>(prompt_entry_roles::prompt)).toString());
 						_ui->negativePromptTextEdit->setPlainText(
-							_model->data(modelIdx, ns::pr_negative_prompt_role).toString());
+							_model->data(modelIdx, static_cast<int>(prompt_entry_roles::negative_prompt)).toString());
 					}
 				});
 
@@ -201,7 +200,8 @@ void main_window::setup_mapper()
 					if (_mapper->currentIndex() >= 0)
 					{
 						const QModelIndex idx = _model->index(_mapper->currentIndex());
-						_model->setData(idx, _ui->promptTextEdit->toPlainText(), ns::pr_prompt_role);
+						_model->setData(idx, _ui->promptTextEdit->toPlainText(),
+										static_cast<int>(prompt_entry_roles::prompt));
 					}
 				});
 
@@ -211,7 +211,8 @@ void main_window::setup_mapper()
 					if (_mapper->currentIndex() >= 0)
 					{
 						const QModelIndex idx = _model->index(_mapper->currentIndex());
-						_model->setData(idx, _ui->negativePromptTextEdit->toPlainText(), ns::pr_negative_prompt_role);
+						_model->setData(idx, _ui->negativePromptTextEdit->toPlainText(),
+										static_cast<int>(prompt_entry_roles::negative_prompt));
 					}
 				});
 
@@ -307,15 +308,15 @@ bool main_window::load_json_file(const QString& file_path)
 	try
 	{
 		const QByteArray data = file.readAll();
-		nlohmann::json j = nlohmann::json::parse(data.toStdString());
+		nlohmann::json json = nlohmann::json::parse(data.toStdString());
 
-		for (const auto& entry : j)
+		for (const auto& entry : json)
 		{
 			const auto name = entry["name"].get<QString>();
 			const auto prompt = entry["prompt"].get<QString>();
 			const auto negative = entry["negative_prompt"].get<QString>();
 
-			_model->add_entry(ns::prompt_entry(name, prompt, negative));
+			_model->add_entry(prompt_entry(name, prompt, negative));
 		}
 
 		if (_model->rowCount(QModelIndex()) > 0)
@@ -332,7 +333,7 @@ bool main_window::load_json_file(const QString& file_path)
 								   QFileInfo(file).fileName().toStdString()).data());
 		setWindowModified(false);
 
-		_ui->statusbar->showMessage(tr("File loaded successfully"), 3000);
+		_ui->statusbar->showMessage(tr("File loaded successfully"), status_bar_timeout);
 		return true;
 	}
 	catch (const std::exception& ex)
@@ -357,16 +358,19 @@ bool main_window::load_csv_file(const QString& file_path)
 	{
 		_model->clear();
 
+
 		for (csv::CSVReader reader(file_path.toStdString()); csv::CSVRow& row : reader)
 		{
 			auto name = row["name"].get<std::string>();
 			auto prompt = row["prompt"].get<std::string>();
 			auto negative = row["negative_prompt"].get<std::string>();
 
-			_model->add_entry(ns::prompt_entry(
+
+			_model->add_entry(prompt_entry(
 				QString::fromStdString(name),
 				QString::fromStdString(prompt),
-				QString::fromStdString(negative)));
+				QString::fromStdString(negative)
+			));
 		}
 
 		setup_mapper();
@@ -376,7 +380,7 @@ bool main_window::load_csv_file(const QString& file_path)
 		setWindowModified(true);
 
 		settings::instance().set_last_directory(QFileInfo(file_path).absolutePath());
-		_ui->statusbar->showMessage(tr("CSV file imported successfully"), 3000);
+		_ui->statusbar->showMessage(tr("CSV file imported successfully"), status_bar_timeout);
 		return true;
 	}
 	catch (const std::exception& ex)
@@ -411,7 +415,10 @@ void main_window::add_entry_clicked()
 	dialog.setWindowTitle("Add Entry");
 	dialog.set_confirm_button_text("Add");
 
-	if (dialog.exec() != QDialog::Accepted) return;
+	if (dialog.exec() != QDialog::Accepted)
+	{
+		return;
+	}
 
 	_model->add_entry({dialog.get_name(), "{prompt}", ""});
 
@@ -430,31 +437,43 @@ void main_window::rename_entry_clicked()
 	const auto selected_index = _ui->promptnameComboBox->currentIndex();
 	const auto source_index = _proxy_model->mapToSource(_proxy_model->index(selected_index, 0)).row();
 
-	if (source_index < 0 || source_index >= _model->rowCount(QModelIndex())) return;
+	if (source_index < 0 || source_index >= _model->rowCount(QModelIndex()))
+	{
+		return;
+	}
 
 	const auto model_index = _model->index(source_index);
-	const auto old_name = _model->data(model_index, ns::prompt_entry_roles::pr_name_role).toString();
+	const auto old_name = _model->data(model_index, static_cast<int>(prompt_entry_roles::name)).toString();
 
 	new_entry_dialog dialog(this);
 	dialog.setWindowTitle("Rename Entry");
 	dialog.set_name(old_name);
 	dialog.set_confirm_button_text("Rename");
 
-	if (dialog.exec() != QDialog::Accepted) return;
+	if (dialog.exec() != QDialog::Accepted)
+	{
+		return;
+	}
 
 	const auto name = dialog.get_name().toStdString();
-	_model->setData(model_index, QString::fromStdString(name), ns::prompt_entry_roles::pr_name_role);
+	_model->setData(model_index, QString::fromStdString(name), static_cast<int>(prompt_entry_roles::name));
 }
 
 void main_window::remove_entry_clicked()
 {
 	const auto selected_index = _ui->promptnameComboBox->currentIndex();
-	if (selected_index < 0 || selected_index >= _model->rowCount(QModelIndex())) return;
+	if (selected_index < 0 || selected_index >= _model->rowCount(QModelIndex()))
+	{
+		return;
+	}
 
 	const auto reply = QMessageBox::question(this, _model->at(selected_index).name,
 											 "Are you sure you want to remove this entry?",
 											 QMessageBox::Yes | QMessageBox::No);
-	if (reply == QMessageBox::No) return;
+	if (reply == QMessageBox::No)
+	{
+		return;
+	}
 	_model->remove_entry(selected_index);
 }
 
@@ -562,11 +581,11 @@ void main_window::close_clicked()
 void main_window::remove_duplicates_clicked()
 {
 	std::unordered_set<QString> unique_names;
-	QVector<ns::prompt_entry> unique_entries;
+	QVector<prompt_entry> unique_entries;
 
 	Q_FOREACH(const auto& entry, _model->entries())
 	{
-		if (auto [it, inserted] = unique_names.insert(entry.name); inserted)
+		if (auto [iterator, inserted] = unique_names.insert(entry.name); inserted)
 		{
 			unique_entries.push_back(entry);
 		}
@@ -581,8 +600,8 @@ void main_window::remove_duplicates_clicked()
 	setWindowModified(true);
 }
 
-void main_window::model_data_changed(const QModelIndex&, const QModelIndex&,
-									 const QList<int>&)
+void main_window::model_data_changed(const QModelIndex& /*unused*/, const QModelIndex& /*unused*/,
+									 const QList<int>& /*unused*/)
 {
 	setWindowModified(true);
 }

@@ -20,7 +20,7 @@ QT_END_NAMESPACE
 
 class new_entry_dialog final : public QDialog
 {
-    Q_OBJECT
+    Q_OBJECT // NOLINT(*-identifier-length)
 
 public:
     explicit new_entry_dialog(QWidget* parent = nullptr);

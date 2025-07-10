@@ -457,24 +457,31 @@ void main_window::rename_entry_clicked()
 
 	const auto name = dialog.get_name().toStdString();
 	_model->setData(model_index, QString::fromStdString(name), static_cast<int>(prompt_entry_roles::name));
+	_model->submit();
 }
 
 void main_window::remove_entry_clicked()
 {
+	// Convert proxy index to source index
 	const auto selected_index = _ui->promptnameComboBox->currentIndex();
-	if (selected_index < 0 || selected_index >= _model->rowCount(QModelIndex()))
+	const auto source_index = _proxy_model->mapToSource(_proxy_model->index(selected_index, 0)).row();
+
+	if (source_index < 0 || source_index >= _model->rowCount(QModelIndex()))
 	{
 		return;
 	}
 
-	const auto reply = QMessageBox::question(this, _model->at(selected_index).name,
-											 "Are you sure you want to remove this entry?",
+	const auto model_index = _model->index(source_index);
+	const auto name = _model->data(model_index, static_cast<int>(prompt_entry_roles::name)).toString();
+	const auto reply = QMessageBox::question(this, "Remove Entry",
+											 tr("Are you sure you want to remove the '%1' entry?").arg(name),
 											 QMessageBox::Yes | QMessageBox::No);
 	if (reply == QMessageBox::No)
 	{
 		return;
 	}
-	_model->remove_entry(selected_index);
+	_model->remove_entry(source_index);
+	setup_mapper();
 }
 
 void main_window::new_file_clicked()

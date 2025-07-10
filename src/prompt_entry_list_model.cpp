@@ -4,7 +4,7 @@
 
 #include "include/prompt_entry_list_model.h"
 
-prompt_entry_list_model::prompt_entry_list_model(QObject* parent): QAbstractListModel(parent)
+prompt_entry_list_model::prompt_entry_list_model(QObject* parent) : QAbstractListModel(parent)
 {
 }
 
